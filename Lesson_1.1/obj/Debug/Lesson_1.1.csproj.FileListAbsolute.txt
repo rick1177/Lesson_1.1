@@ -1,0 +1,10 @@
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\bin\Debug\Lesson_1._1.exe.config
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\bin\Debug\Lesson_1._1.exe
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\bin\Debug\Lesson_1._1.pdb
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1.1.csproj.AssemblyReference.cache
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1.1.csproj.SuggestedBindingRedirects.cache
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1._1.Properties.Resources.resources
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1.1.csproj.GenerateResource.cache
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1.1.csproj.CoreCompileInputs.cache
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1._1.exe
+D:\Code\C#\Dubna\Lesson_1.1\Lesson_1.1\Lesson_1.1\obj\Debug\Lesson_1._1.pdb
