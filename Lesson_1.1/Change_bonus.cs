@@ -15,8 +15,7 @@ namespace Lesson_01
         private void textBox_сhange_bonus_KeyPress(object sender, KeyPressEventArgs e)
         {
             var ch = e.KeyChar;
-            
-                       
+
         }
 
     }

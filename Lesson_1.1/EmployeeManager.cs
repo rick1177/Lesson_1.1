@@ -98,7 +98,9 @@ namespace Lesson_01
             foreach (Employee employee in employees)
             {
                 var field = typeof(Employee).GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
-
+                var field_2 = field.GetValue(employee);
+                var a = field.GetValue(employee).Equals(fieldValue);
+                
                 if (field != null && field.GetValue(employee).Equals(fieldValue))
                 {
                     return employee;

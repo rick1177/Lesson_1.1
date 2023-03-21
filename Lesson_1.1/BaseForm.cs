@@ -12,7 +12,9 @@ namespace Lesson_01
 
         public Form1()
         {
+            // Устанавливаем первый элемент списка
             InitializeComponent();
+            comboBox1.SelectedIndex = 0;
             _employeeManager = EmployeeManager.Instance;
         }
 
@@ -30,8 +32,10 @@ namespace Lesson_01
             var sn = textBox_second_name.Text;
             float salary;
             if (!float.TryParse(textBox_salary.Text, out salary)) salary = 0;
+            float bonus;
+            if (!float.TryParse(textBox_bonus.Text, out bonus)) bonus = 0;
 
-            if ((fn == "") & (mn == "") & (sn == "") & (salary == 0))
+            if ((fn == "") & (mn == "") & (sn == "") & (salary == 0) & (bonus ==0))
             {
                 if (selectedItem != "")
                 {
@@ -41,10 +45,7 @@ namespace Lesson_01
                     }
                     else
                     {
-                        using (var form_change_bonus = new Change_bonus())
-                        {
-                            int a = 7;
-                        }
+                        emp = new Manager();
                     }
 
                 }
@@ -59,7 +60,21 @@ namespace Lesson_01
                     emptyDict.Add("middle_name", mn);
                     emptyDict.Add("second_name", sn);
 
-                    emp = new Employee(emptyDict);
+                    if (selectedItem == "Сотрудник")
+                    {
+                        emp = new Employee(emptyDict);   
+                    }
+                    else
+                    {
+                        if (bonus == 0)
+                        {
+                            emp = new Manager(emptyDict);
+                        }
+                        else
+                        {
+                            emp = new Manager(emptyDict, salary, bonus);
+                        }
+                    }
                 }
                 else
                 {
@@ -68,7 +83,21 @@ namespace Lesson_01
                     emptyDict.Add("middle_name", mn);
                     emptyDict.Add("second_name", sn);
 
-                    emp = new Employee(emptyDict, salary);
+                    if (selectedItem == "Сотрудник")
+                    {
+                        emp = new Employee(emptyDict, salary);
+                    }
+                    else
+                    {
+                        if (bonus == 0)
+                        {
+                            emp = new Manager(emptyDict, salary);
+                        }
+                        else
+                        {
+                            emp = new Manager(emptyDict, salary, bonus);
+                        }
+                    }
                 }
             }
 
@@ -113,7 +142,9 @@ namespace Lesson_01
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (listBox1.SelectedIndex != -1) // проверяем, что элемент выбран
+            if (listBox1.SelectedIndex != -1)
+            {
+                // проверяем, что элемент выбран
                 /*string texmt_text = listBox1.SelectedItem.ToString();*/
                 /*Change_salary form_change_salary = new Change_salary(texmt_text);*/
                 using (var form_change_salary = new Change_salary())
@@ -133,6 +164,7 @@ namespace Lesson_01
                                 var selectedText = listBox1.SelectedItem.ToString();
                                 var index = selectedText.IndexOf(":");
                                 var result_find = selectedText.Substring(0, index);
+                                result_find = result_find.Substring(0, result_find.IndexOf(' '));
                                 var find_emp = _employeeManager.FindEmployeeByField("IDEmployee", result_find);
                                 if (find_emp != null)
                                 {
@@ -150,19 +182,68 @@ namespace Lesson_01
                         }
                     }
                 }
+            }
         }
 
         private void textBox_salary_KeyPress(object sender, KeyPressEventArgs e)
         {
             var ch = e.KeyChar;
 
-            // Разрешаем ввод цифр, точки и запятой
-            if (char.IsDigit(ch) || ch == '.' || ch == ',')
+            // Разрешаем ввод цифр и точки
+            if (char.IsDigit(ch) || ch == '.')
             {
+                var text = textBox_salary.Text;
+
                 // Проверяем, есть ли уже точка или запятая в строке
-                if (textBox_first_name.Text.Contains('.') || textBox_first_name.Text.Contains(','))
-                    // Если есть, блокируем ввод новой точки или запятой
-                    e.Handled = ch == '.' || ch == ',';
+                if (ch == '.' && (text.Contains('.') || text.Length == 0 || text.EndsWith(".")))
+                {
+                    e.Handled = true;
+                }
+                else if (text.Contains('.'))
+                {
+                    // Проверяем, сколько цифр после точки
+                    var parts = text.Split('.');
+                    if (parts.Length > 1 && parts[1].Length >= 2)
+                    {
+                        e.Handled = true;
+                    }
+                }
+            }
+            else if (ch == (char)Keys.Back)
+            {
+                // Разрешаем удаление символов
+                e.Handled = false;
+            }
+            else
+            {
+                // Блокируем все остальные символы
+                e.Handled = true;
+            }
+        }
+        
+        private void textBox_bonus_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            var ch = e.KeyChar;
+
+            // Разрешаем ввод цифр и точки
+            if (char.IsDigit(ch) || ch == '.')
+            {
+                var text = textBox_bonus.Text;
+
+                // Проверяем, есть ли уже точка или запятая в строке
+                if (ch == '.' && (text.Contains('.') || text.Length == 0 || text.EndsWith(".")))
+                {
+                    e.Handled = true;
+                }
+                else if (text.Contains('.'))
+                {
+                    // Проверяем, сколько цифр после точки
+                    var parts = text.Split('.');
+                    if (parts.Length > 1 && parts[1].Length >= 2)
+                    {
+                        e.Handled = true;
+                    }
+                }
             }
             else if (ch == (char)Keys.Back)
             {
@@ -190,6 +271,42 @@ namespace Lesson_01
         {
             if (!char.IsLetter(e.KeyChar) && e.KeyChar != '-' && e.KeyChar != (char)Keys.Back) e.Handled = true;
         }
-        
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedItem.ToString() == "Менеджер")
+            {
+                textBox_bonus.Enabled = true;
+            }
+            else if (comboBox1.SelectedItem.ToString() == "Сотрудник")
+            {
+                textBox_bonus.Enabled = false;
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                if (change_item.Text == "Изменить запись целиком")
+                {
+                    button_show_info.Enabled = false;
+                    comboBox1.Enabled = false;
+                    button_add_emloyee.Enabled = false;
+                    delete_item.Enabled = false;
+                    change_salary.Enabled = false;
+                    change_item.Text = "O.K.";
+                }
+                else
+                {
+                    button_show_info.Enabled = true;
+                    comboBox1.Enabled = true;
+                    button_add_emloyee.Enabled = true;
+                    delete_item.Enabled = true;
+                    change_salary.Enabled = true;
+                    change_item.Text = "Изменить запись целиком";
+                }
+            }
+        }
     }
 }
