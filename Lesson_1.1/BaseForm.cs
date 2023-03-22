@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace Lesson_01
 {
+    
+    
     public partial class Form1 : Form
     {
         private EmployeeManager _employeeManager;
@@ -21,11 +24,8 @@ namespace Lesson_01
         private void add_emloyee_Click(object sender, EventArgs e)
         {
             Employee emp = null;
-            string selectedItem = "";
-            if (comboBox1.SelectedIndex !=-1)
-            {
-                selectedItem = comboBox1.SelectedItem.ToString();
-            }
+            var selectedItem = "";
+            if (comboBox1.SelectedIndex != -1) selectedItem = comboBox1.SelectedItem.ToString();
 
             var fn = textBox_first_name.Text;
             var mn = textBox_middle_name.Text;
@@ -35,21 +35,15 @@ namespace Lesson_01
             float bonus;
             if (!float.TryParse(textBox_bonus.Text, out bonus)) bonus = 0;
 
-            if ((fn == "") & (mn == "") & (sn == "") & (salary == 0) & (bonus ==0))
+            if ((fn == "") & (mn == "") & (sn == "") & (salary == 0) & (bonus == 0))
             {
                 if (selectedItem != "")
                 {
                     if (selectedItem == "Сотрудник")
-                    {
                         emp = new Employee();
-                    }
                     else
-                    {
                         emp = new Manager();
-                    }
-
                 }
-                
             }
             else
             {
@@ -62,18 +56,14 @@ namespace Lesson_01
 
                     if (selectedItem == "Сотрудник")
                     {
-                        emp = new Employee(emptyDict);   
+                        emp = new Employee(emptyDict);
                     }
                     else
                     {
                         if (bonus == 0)
-                        {
                             emp = new Manager(emptyDict);
-                        }
                         else
-                        {
                             emp = new Manager(emptyDict, salary, bonus);
-                        }
                     }
                 }
                 else
@@ -90,19 +80,25 @@ namespace Lesson_01
                     else
                     {
                         if (bonus == 0)
-                        {
                             emp = new Manager(emptyDict, salary);
-                        }
                         else
-                        {
                             emp = new Manager(emptyDict, salary, bonus);
-                        }
                     }
                 }
             }
 
             _employeeManager.AddEmployee(emp);
-            listBox1.Items.Add(emp.ToString());
+            
+
+            if (emp is Manager)
+            {
+                listBox1.Items.Add(emp.ToString());
+            }
+            else
+            {
+                listBox1.Items.Add(emp.ToString());
+            }
+            
         }
 
 
@@ -131,7 +127,7 @@ namespace Lesson_01
                 var selectedText = listBox1.SelectedItem.ToString();
                 var index = selectedText.IndexOf(" (");
                 var result = selectedText.Substring(0, index);
-                var find_emp = _employeeManager.FindEmployeeByField("IDEmployee", result);
+                var find_emp = _employeeManager.FindByField<Employee>("IDEmployee", result);
                 if (find_emp != null)
                 {
                     _employeeManager.RemoveEmployee(find_emp);
@@ -143,7 +139,6 @@ namespace Lesson_01
         private void button3_Click(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
-            {
                 // проверяем, что элемент выбран
                 /*string texmt_text = listBox1.SelectedItem.ToString();*/
                 /*Change_salary form_change_salary = new Change_salary(texmt_text);*/
@@ -165,7 +160,7 @@ namespace Lesson_01
                                 var index = selectedText.IndexOf(":");
                                 var result_find = selectedText.Substring(0, index);
                                 result_find = result_find.Substring(0, result_find.IndexOf(' '));
-                                var find_emp = _employeeManager.FindEmployeeByField("IDEmployee", result_find);
+                                var find_emp = _employeeManager.FindByField<Employee>("IDEmployee", result_find);
                                 if (find_emp != null)
                                 {
                                     var base_salaty = find_emp.get_salary();
@@ -174,7 +169,7 @@ namespace Lesson_01
                                         { "salary", base_salaty * (1 + salary_change / 100) }
                                     };
 
-                                    _employeeManager.UpdateEmployee(result_find, fieldsToUpdate);
+                                    _employeeManager.Update<Employee>(find_emp, fieldsToUpdate);
 
                                     listBox1.Items[listBox1.SelectedIndex] = find_emp.ToString();
                                 }
@@ -182,7 +177,6 @@ namespace Lesson_01
                         }
                     }
                 }
-            }
         }
 
         private void textBox_salary_KeyPress(object sender, KeyPressEventArgs e)
@@ -203,10 +197,7 @@ namespace Lesson_01
                 {
                     // Проверяем, сколько цифр после точки
                     var parts = text.Split('.');
-                    if (parts.Length > 1 && parts[1].Length >= 2)
-                    {
-                        e.Handled = true;
-                    }
+                    if (parts.Length > 1 && parts[1].Length >= 2) e.Handled = true;
                 }
             }
             else if (ch == (char)Keys.Back)
@@ -220,7 +211,7 @@ namespace Lesson_01
                 e.Handled = true;
             }
         }
-        
+
         private void textBox_bonus_KeyPress(object sender, KeyPressEventArgs e)
         {
             var ch = e.KeyChar;
@@ -239,10 +230,7 @@ namespace Lesson_01
                 {
                     // Проверяем, сколько цифр после точки
                     var parts = text.Split('.');
-                    if (parts.Length > 1 && parts[1].Length >= 2)
-                    {
-                        e.Handled = true;
-                    }
+                    if (parts.Length > 1 && parts[1].Length >= 2) e.Handled = true;
                 }
             }
             else if (ch == (char)Keys.Back)
@@ -275,19 +263,21 @@ namespace Lesson_01
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox1.SelectedItem.ToString() == "Менеджер")
-            {
                 textBox_bonus.Enabled = true;
-            }
-            else if (comboBox1.SelectedItem.ToString() == "Сотрудник")
-            {
-                textBox_bonus.Enabled = false;
-            }
+            else if (comboBox1.SelectedItem.ToString() == "Сотрудник") textBox_bonus.Enabled = false;
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
             {
+                var selectedText = listBox1.SelectedItem.ToString();
+                var index = selectedText.IndexOf(":");
+                var result_find = selectedText.Substring(0, index);
+                result_find = result_find.Substring(0, result_find.IndexOf(' '));
+                var find_emp = _employeeManager.FindByField<Employee>("IDEmployee", result_find);
+                var find_man = _employeeManager.FindByField<Manager>("IDEmployee", result_find);
+                
                 if (change_item.Text == "Изменить запись целиком")
                 {
                     button_show_info.Enabled = false;
@@ -296,15 +286,93 @@ namespace Lesson_01
                     delete_item.Enabled = false;
                     change_salary.Enabled = false;
                     change_item.Text = "O.K.";
+                    
+                    if (find_emp != null)
+                    {
+                        textBox_first_name.Text = find_emp.get_first_name();
+                        textBox_middle_name.Text = find_emp.get_middle_name();
+                        textBox_second_name.Text = find_emp.get_second_name();
+                        textBox_salary.Text = find_emp.get_salary().ToString();
+                        if (find_man != null)
+                            textBox_bonus.Text = find_man.get_bonus().ToString();
+                        else
+                            textBox_bonus.Enabled = false;
+                    }
                 }
                 else
                 {
+                    Dictionary<string, object> sendInfo = new Dictionary<string, object>();
+                    
+                    string first_name = textBox_first_name.Text !=""
+                        ? textBox_first_name.Text
+                        : first_name = find_emp.get_first_name();
+                    sendInfo.Add("first_name", first_name);
+
+                    string middle_name = textBox_middle_name.Text !=""
+                        ? textBox_middle_name.Text
+                        : first_name = find_emp.get_middle_name();
+                    sendInfo.Add("middle_name", middle_name);
+                    
+                    string second_name = textBox_second_name.Text !=""
+                        ? textBox_second_name.Text
+                        : second_name = find_emp.get_second_name();
+                    sendInfo.Add("second_name", second_name);
+                    
+                    float salary;
+                    if (textBox_salary.Text != "")
+                    {
+                        if (!float.TryParse(textBox_salary.Text, NumberStyles.Float, CultureInfo.InvariantCulture,
+                                out salary)) salary = 0;
+                    }
+                    else
+                    {
+                        salary = find_emp.get_salary();
+                    }
+                    sendInfo.Add("salary", salary);
+
+                    if (find_man != null)
+                    {
+                        float bonus;
+                        if (textBox_bonus.Text != "")
+                        {
+                            if (!float.TryParse(textBox_bonus.Text, NumberStyles.Float, CultureInfo.InvariantCulture,
+                                    out bonus)) bonus = 0;
+                        }
+                        else
+                        {
+                            bonus = find_man.get_bonus();
+                        }
+                        sendInfo.Add("bonus", bonus);
+                    }
+
+
+                    if (sendInfo.Count != 0)
+                    {
+                        if (find_man != null)
+                        {
+                            _employeeManager.Update<Manager>(find_man, sendInfo);
+                            listBox1.Items[listBox1.SelectedIndex] = find_man.ToString();
+                        }
+                        else
+                        {
+                            _employeeManager.Update<Employee>(find_emp, sendInfo);
+                            listBox1.Items[listBox1.SelectedIndex] = find_emp.ToString();
+                        }
+                    }
+                    
                     button_show_info.Enabled = true;
                     comboBox1.Enabled = true;
                     button_add_emloyee.Enabled = true;
                     delete_item.Enabled = true;
                     change_salary.Enabled = true;
                     change_item.Text = "Изменить запись целиком";
+
+                    textBox_first_name.Text = "";
+                    textBox_middle_name.Text = "";
+                    textBox_second_name.Text = "";
+                    textBox_salary.Text = "";
+                    textBox_bonus.Text = "";
+                    textBox_bonus.Enabled = true;
                 }
             }
         }

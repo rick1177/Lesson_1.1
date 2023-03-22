@@ -78,6 +78,21 @@ namespace Lesson_01
             return salary;
         }
 
+        public virtual string get_first_name()
+        {
+            return first_name;
+        }
+
+        public virtual string get_middle_name()
+        {
+            return middle_name;
+        }
+
+        public virtual string get_second_name()
+        {
+            return second_name;
+        }
+
 
         public void change_employee(Employee emp,
             string f_n = "",
